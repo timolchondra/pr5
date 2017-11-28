@@ -21,22 +21,25 @@ void function2(FILE *fptr) {
   rewind(fptr);
 }
 void function3(FILE *fptr) {
-  int i, count;
+  int i, count, findid;
   fseek(fptr, 0, SEEK_END);
   count = ftell(fptr);
   rewind(fptr);
   Animal animal;
-  for(i=0; i < count/4; i++) {
+  for(i=0; i < count/sizeof(Animal); i++) {
     fread(&animal.id, sizeof(animal.id),1,fptr);
     fread(animal.name, sizeof(animal.name),1,fptr);
     fread(animal.species,sizeof(animal.species),1,fptr);
     fread(&animal.size,sizeof(animal.size),1,fptr);
-    fread(&animal,sizeof(animal.age),1,fptr);
+    fread(&animal.age,sizeof(animal.age),1,fptr);
     
-    printf("%d,%s,%s,%c,%d\n", animal.age, animal.name, animal.species, animal.size, animal.age); 
+    if(animal.id == findid) {
+      printf("%hd,%s,%s,%c,%hd\n", animal.age, animal.name, animal.species, animal.size, animal.age); 
+      break;
+    }
   }
+  if(i > count/sizeof(Animal)){printf("Can't find id. Try Again\n");
   
-
 }
 void function4(FILE *fptr);
 void function5(FILE *fptr);
