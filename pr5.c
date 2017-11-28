@@ -42,11 +42,12 @@ void function3(FILE *fptr,int count) {
 }
 void function4(FILE *fptr,int count);
 
-void function5(FILE *fptr,int count) {
+void function5(FILE *fptr,int *count) {
   Animal animal;
   int i, locate;
   short int findid;
   char buffer;
+
   
   printf("Enter the id you want to delete: ");
   scanf("%hd",&findid);
@@ -54,7 +55,7 @@ void function5(FILE *fptr,int count) {
   
   
   
-  for(i=0; i < count/sizeof(Animal); i++) {
+  for(i=0; i < *count/sizeof(Animal); i++) {
     fread(&animal, sizeof(Animal), 1, fptr);     
     if(animal.id == findid) {
       locate = ftell(fptr) - sizeof(Animal);
@@ -63,7 +64,7 @@ void function5(FILE *fptr,int count) {
   }
   fseek(fptr, locate + sizeof(Animal), SEEK_SET);
   
-  for(i = 0; i < (count - locate - sizeof(Animal))/sizeof(Animal); i++) {
+  for(i = 0; i < (*count - locate - sizeof(Animal))/sizeof(Animal); i++) {
     fread(&animal, sizeof(Animal), 1, fptr); 
     animal.id--;
     
@@ -72,7 +73,10 @@ void function5(FILE *fptr,int count) {
 
     fseek(fptr, sizeof(Animal), SEEK_CUR);
   }
-  truncate("animals.dat", count - sizeof(Animal));
+
+  truncate("animals.dat", *count - sizeof(Animal));
+  fseek(fptr,0,SEEK_END);
+  *count = ftell(fptr);
   rewind(fptr);
 }
 void fprintfCSV(FILE *fptr, int count) {

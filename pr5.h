@@ -20,7 +20,7 @@ void function1(FILE *fptr,int count);
 void function2(FILE *fptr,int count);
 void function3(FILE *fptr,int count);
 void function4(FILE *fptr,int count);
-void function5(FILE *fptr,int count);
+void function5(FILE *fptr,int *count);
 void fprintfCSV(FILE *fptr, int count);
 
 

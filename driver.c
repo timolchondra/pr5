@@ -37,7 +37,7 @@ int main() {
     }
     if(userinput == 5) {
       //stuff
-      function5(fptr,count);
+      function5(fptr,&count);
     }
   }
   fprintfCSV(fptr, count);
