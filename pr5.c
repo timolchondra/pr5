@@ -1,11 +1,9 @@
 #include "pr5.h"
 
-void function1(FILE *fptr);
-void function2(FILE *fptr) {
-  int temp, count, i, j=0;
-  fseek(fptr, 0, SEEK_END);
-  count = ftell(fptr);
-  rewind(fptr);
+void function1(FILE *fptr,int count);
+void function2(FILE *fptr, int count) {
+  int temp, i, j=0;
+ 
   
   for(i = 0; i < count/4; i++) {
     fread(&temp, sizeof(int), 1, fptr);
@@ -20,24 +18,17 @@ void function2(FILE *fptr) {
   printf("\n");
   rewind(fptr);
 }
-void function3(FILE *fptr) {
-  int i, count;
+void function3(FILE *fptr,int count) {
+  int i;
   char buffer;
   short int findid;
-  fseek(fptr, 0, SEEK_END);
-  count = ftell(fptr);
-  rewind(fptr);
   
   printf("Please input the id you want to search for: ");
-  scanf("%d", &findid);
+  scanf("%hd", &findid);
   buffer = getchar();
   Animal animal;
   for(i=0; i < count/sizeof(Animal); i++) {
-    fread(&animal.id, sizeof(animal.id),1,fptr);
-    fread(animal.name, sizeof(animal.name),1,fptr);
-    fread(animal.species,sizeof(animal.species),1,fptr);
-    fread(&animal.size,sizeof(animal.size),1,fptr);
-    fread(&animal.age,sizeof(animal.age),1,fptr);
+    fread(&animal, sizeof(Animal), 1, fptr);
     
     if(animal.id == findid) {
       printf("%hd,%s,%s,%c,%hd\n", animal.id, animal.name, animal.species, animal.size, animal.age); 
@@ -47,7 +38,57 @@ void function3(FILE *fptr) {
   if(i > count/sizeof(Animal) - 1){
     printf("Can't find id. Try Again\n");
   }
-  
+  rewind(fptr);
 }
-void function4(FILE *fptr);
-void function5(FILE *fptr);
+void function4(FILE *fptr,int count);
+
+void function5(FILE *fptr,int count) {
+  Animal animal;
+  int i, locate;
+  short int findid;
+  char buffer;
+  
+  printf("Enter the id you want to delete: ");
+  scanf("%hd",&findid);
+  buffer = getchar();
+  
+  
+  
+  for(i=0; i < count/sizeof(Animal); i++) {
+    fread(&animal, sizeof(Animal), 1, fptr);     
+    if(animal.id == findid) {
+      locate = ftell(fptr) - sizeof(Animal);
+      break;
+    }
+  }
+  fseek(fptr, locate + sizeof(Animal), SEEK_SET);
+  
+  for(i = 0; i < (count - locate - sizeof(Animal))/sizeof(Animal); i++) {
+    fread(&animal, sizeof(Animal), 1, fptr); 
+    animal.id--;
+    
+    fseek(fptr,  - sizeof(Animal)*2,SEEK_CUR);
+    fwrite(&animal, sizeof(Animal), 1, fptr);
+
+    fseek(fptr, sizeof(Animal), SEEK_CUR);
+  }
+  truncate("animals.dat", count - sizeof(Animal));
+  rewind(fptr);
+}
+void fprintfCSV(FILE *fptr, int count) {
+  int i;
+  Animal animal;
+  FILE* animalscsv = fopen("animals.csv","w");
+  
+  for(i = 0; i < count/sizeof(Animal); i++) {
+    fread(&animal, sizeof(Animal), 1, fptr);
+    fprintf(animalscsv,"%hd,%s,%s,%c,%hd\n", animal.id, animal.name, animal.species, animal.size, animal.age);
+  
+  }
+  fclose(animalscsv);
+}
+
+  
+  
+  
+ 
