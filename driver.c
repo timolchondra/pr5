@@ -40,6 +40,7 @@ int main() {
       function5(fptr,&count);
     }
   }
+  printf("Have a good weekend\n");
   fprintfCSV(fptr, count);
   fclose(fptr);
   return 0;
