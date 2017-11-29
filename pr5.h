@@ -16,12 +16,12 @@ struct animal {
 
 typedef struct animal Animal;
 
-void function1(FILE *fptr,int count);
-void function2(FILE *fptr,int count);
-void function3(FILE *fptr,int count);
-void function4(FILE *fptr,int count);
-void function5(FILE *fptr,int *count);
-void fprintfCSV(FILE *fptr, int count);
+void function1(FILE *fptr,int filesize);
+void function2(FILE *fptr,int filesize);
+void function3(FILE *fptr,int filesize);
+void function4(FILE *fptr,int filesize);
+void function5(FILE *fptr,int *filesize);
+void fprintfCSV(FILE *fptr, int filesize);
 
 
 #endif

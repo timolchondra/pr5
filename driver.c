@@ -1,14 +1,14 @@
 #include "pr5.h"
 
 int main() {
-  int userinput = 1, count;
+  int userinput = 1, filesize;
   FILE* fptr = fopen("animals.dat","rb+");
   if(fptr == NULL) {
     printf("File does not exist");
     return -1;
   }
   fseek(fptr, 0, SEEK_END);
-  count = ftell(fptr);
+  filesize = ftell(fptr);
   rewind(fptr);
   
   while(userinput != 0) {
@@ -25,23 +25,23 @@ int main() {
     }
     if(userinput == 2) {
      //read as int
-     function2(fptr,count);
+     function2(fptr,filesize);
      
     }
     if(userinput == 3) {
      //animal stuff
-     function3(fptr,count);
+     function3(fptr,filesize);
     }
     if(userinput == 4) {
       //other stuff
     }
     if(userinput == 5) {
       //stuff
-      function5(fptr,&count);
+      function5(fptr,&filesize);
     }
   }
   printf("Have a good weekend\n");
-  fprintfCSV(fptr, count);
+  fprintfCSV(fptr, filesize);
   fclose(fptr);
   return 0;
 }
