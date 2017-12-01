@@ -5,7 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 #pragma pack(1)
-
+//This initializes the structs and functions used by our driver.c and pr5.c 
 struct animal {
   short int id;
   char name[20];

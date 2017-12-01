@@ -1,8 +1,13 @@
 #include "pr5.h"
 
 void function1(FILE *fptr,int filesize) {
-  //int z;
 
+////////////////////////////////////////////////////////////////////////////////////////  
+///   This is where the magic happens for the first part of the assignment           ///
+///   where we only print each string. We tried to have it mimic the String          ///
+///   function in unix where we it prints each non-string character with a space.    ///
+////////////////////////////////////////////////////////////////////////////////////////
+  
   char current;
 
   int a, b = 1;
@@ -14,6 +19,7 @@ void function1(FILE *fptr,int filesize) {
     if(((int) current) >= 32 && ((int) current) <= 127) {
 
       printf("%c",current);
+
       b++;
 
     }
@@ -38,116 +44,199 @@ void function1(FILE *fptr,int filesize) {
 
 }
 void function2(FILE *fptr, int filesize) {
+  
+////////////////////////////////////////////////////////////////////////////////////////  
+///   This is where the magic happens for part 2. The process is actually simpler    ///
+///   than in part 1. Since the file is sorted and in binary it is easier to         ///
+///   handle it.                                                                     ///
+////////////////////////////////////////////////////////////////////////////////////////
+
+
   int temp, i, j=0;
- 
   
   for(i = 0; i < filesize/4; i++) {
+
     fread(&temp, sizeof(int), 1, fptr);
+
     printf("%d ", temp);
+
     j++;
     
     if(j>80/5) {
+
       printf("\n");
+
       j=0;
+
     }
+
   }
+
   printf("\n");
+
   rewind(fptr);
+
 }
+
 void function3(FILE *fptr,int filesize) {
+
+////////////////////////////////////////////////////////////////////////////////////////  
+///   For part 3 we search file by id. For this part we figured out a simple way     ///
+///   to clear the buffer than how we were using it prior.                           ///
+////////////////////////////////////////////////////////////////////////////////////////
+  
   int i;
+
   char buffer;
+
   short int findid;
   
   printf("Please input the id you want to search for: ");
+
   scanf("%hd", &findid);
+
   buffer = getchar();
+
   Animal animal;
-  
+
   if(findid * sizeof(Animal) <= filesize) {
+
     fseek(fptr, sizeof(Animal)* (findid - 1), SEEK_SET);
+
     fread(&animal, sizeof(Animal),1,fptr);
     
     printf("%hd,%s,%s,%c,%hd\n", animal.id, animal.name, animal.species, animal.size, animal.age);
+
   } else {
+
     printf("Can't find id. Please try again.\n");
+
   }
+
   rewind(fptr);
 }
 
 void function4(FILE *fptr,int filesize) {
+
+////////////////////////////////////////////////////////////////////////////////////////  
+///   This is where the magic happens for part 4 of the assignment we store all      ///
+///   the values into an animal object then write that object ot the file. The       ///
+///   simplicity of it was actually quite nice.                                      ///
+////////////////////////////////////////////////////////////////////////////////////////  
+  
   Animal animal;
+
   int a, b;
+
   short int c;
+
   char buffer;
   
   printf("Enter the id you want to add: ");
+
   scanf("%hd",&animal.id);
+
   buffer = getchar();
   
   printf("Enter the name you want to add: ");
+
   scanf("%[^\n]",animal.name);
+
   buffer = getchar();
   
   printf("Enter the species you want to add: ");
+
   scanf("%[^\n]",animal.species);
+
   buffer = getchar();
 
   printf("Enter the size you want the add: ");
+
   scanf("%c", &animal.size);
+
   buffer = getchar();
 
   printf("Enter the age you want the add: ");
+
   scanf("%hd", &animal.age);
+
   buffer = getchar();
 
   if(animal.id * sizeof(Animal) <= filesize) {
+
     fseek(fptr, sizeof(Animal)* (animal.id - 1), SEEK_SET);
+
     fwrite(&animal, sizeof(Animal), 1, fptr);
+
     printf("%hd,%s,%s,%c,%hd\n", animal.id, animal.name, animal.species, animal.size, animal.age);
+
   } else {
+
     printf("Can't find id. Please try again.\n");
+
   }
-  
-  
   
   rewind(fptr);
   
 }
 
-void function5(FILE *fptr,int *filesize) {
-  Animal animal;
-  int i, locate;
-  short int findid;
-  char buffer;
+////////////////////////////////////////////////////////////////////////////////////////  
+///   This is where the magic happens for part 5 of the assignment. We locate where  ///
+///   the animal object we need to delete is then write to the file. The search      ///
+///   becomes quite complicated as we need to jump around using fseek. fseek         ///
+///   allows you to jump around backwards and forwards in the file. We need to       ///
+///   go backward after we decriment the id number.                                  ///
+////////////////////////////////////////////////////////////////////////////////////////
 
+void function5(FILE *fptr,int *filesize) {
+
+  Animal animal;
+
+  int i, locate;
+
+  short int findid;
+
+  char buffer;
   
   printf("Enter the id you want to delete: ");
+
   scanf("%hd",&findid);
+
   buffer = getchar();
   
-  
   if(findid * sizeof(Animal) <= *filesize) {
+
     fseek(fptr, findid * sizeof(Animal), SEEK_SET);
+
     locate = ftell(fptr) - sizeof(Animal);
     
     for(i = 0; i < (*filesize - locate - sizeof(Animal))/sizeof(Animal); i++) {
+
       fread(&animal, sizeof(Animal), 1, fptr); 
+
       animal.id--;
       
       fseek(fptr,  - sizeof(Animal)*2,SEEK_CUR);
+
       fwrite(&animal, sizeof(Animal), 1, fptr);
   
       fseek(fptr, sizeof(Animal), SEEK_CUR);
     }
   
     truncate("animals.dat", *filesize - sizeof(Animal));
+
     fseek(fptr,0,SEEK_END);
+
     *filesize = ftell(fptr);
+
     rewind(fptr);
+
   } else {
+
     printf("Can't find id. Try again\n");
+
   }
+
 }
 void fprintfCSV(FILE *fptr, int filesize) {
   int i;
